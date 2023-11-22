@@ -1,16 +1,6 @@
+#DAA
 
-
-.
-├── DynamicProgramming
-│   ├── a.out
-│   ├── CoinChanging.cpp
-│   ├── Fibonnaci.cpp
-│   ├── KnapSack.cpp
-│   └── LongestSubsequence.cpp
-├── Greedy
-│   ├── AcivitySelection.cpp
-│   ├── a.out
-│   ├── FractionalKnapSack.cpp
-│   └── JobSequencing.cpp
-└── README.md
-
+### Greedy Approach 
+1.Activity Selection 
+2.Fractional KnapSack 
+3.Job Sequencing
