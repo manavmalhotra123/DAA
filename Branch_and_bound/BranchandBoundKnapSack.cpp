@@ -1,45 +1,73 @@
+#include <iostream>
 
-#include<iostream>
 using namespace std;
 
-class Item {
-public:
-  int i, j;
-  int w; // w[i, j] = p(j) + q(j) + w[i, j-1]
-  int c; // c[i, j] = c[i, r-1] + c[r+1, j] + w[i, j]
-  int r; // r[i, j] = argmin(c[i, r-1] + c[r+1, j]) for i <= r <= j
+// Structure to represent an item
+struct Item {
+    int weight;
+    int value;
 };
 
-int main() {
-  int n;
-  cin >> n;
-  int p[n], q[n + 1]; // p[1..n], q[0..n]
-  for (int i = 0; i < n; i++)
-    cin >> p[i];
-  for (int i = 0; i <= n; i++)
-    cin >> q[i];
-  Item **items = new Item *[n + 1];
-  for (int i = 0; i <= n; i++)
-    items[i] = new Item[n + 1];
-  for (int i = 0; i <= n; i++) {
-    items[i][i].w = q[i];
-    items[i][i].c = 0;
-    items[i][i].r = 0;
-  }
-  for (int l = 1; l <= n; l++) { // l is the chain length
-    for (int i = 0; i < n - l + 1; i++) { // i is the start index
-      int j = i + l;                       // j is the end index
-      items[i][j].w = p[j] + q[j] + (j > i ? items[i][j - 1].w : 0);
-      items[i][j].c = INT16_MAX;
-      for (int r = i; r <= j; r++) {
-        int c = (r > i ? items[i][r - 1].c : 0) + (r < j ? items[r + 1][j].c : 0) + items[i][j].w;
-        if (c < items[i][j].c) {
-          items[i][j].c = c;
-          items[i][j].r = r;
-        }
-      }
+// Function to calculate the upper bound value for a node
+int upperBound(int capacity, int weight, int value, Item items[], int n) {
+    int totalWeight = weight;
+    int totalValue = value;
+    int i = n;
+
+    // Add items until the capacity is exceeded
+    while (i < n && totalWeight + items[i].weight <= capacity) {
+        totalWeight += items[i].weight;
+        totalValue += items[i].value;
+        i++;
     }
-  }
-  cout << "Cost: " << items[0][n - 1].c << endl;
-  return 0;
+
+    // If the capacity is not fully utilized, calculate the upper bound
+    if (i < n) {
+        totalValue += (capacity - totalWeight) * items[i].value / items[i].weight;
+    }
+
+    return totalValue;
+}
+
+// Function to perform branch and bound recursively
+void branchAndBound(int capacity, int weight, int value, Item items[], int n, int &maxValue) {
+    // Base case: if all items are considered or capacity becomes 0
+    if (n == 0 || capacity == 0) {
+        if (value > maxValue) {
+            maxValue = value;
+        }
+        return;
+    }
+
+    // Calculate the upper bound
+    int bound = upperBound(capacity, weight, value, items, n);
+
+    // If the upper bound is less than the current maximum value, stop exploring this node
+    if (bound <= maxValue) {
+        return;
+    }
+
+    // Explore left subtree (exclude current item)
+    branchAndBound(capacity, weight, value, items, n - 1, maxValue);
+
+    // Explore right subtree (include current item)
+    if (capacity >= items[n - 1].weight) {
+        branchAndBound(capacity - items[n - 1].weight,
+                       weight + items[n - 1].weight,
+                       value + items[n - 1].value,
+                       items, n - 1, maxValue);
+    }
+}
+
+int main() {
+    int capacity = 10;
+    Item items[] = {{5, 10}, {8, 7}, {3, 5}, {2, 3}};
+    int n = sizeof(items) / sizeof(items[0]);
+    int maxValue = 0;
+
+    branchAndBound(capacity, 0, 0, items, n, maxValue);
+
+    cout << "The maximum value that can be obtained: " << maxValue << endl;
+
+    return 0;
 }
