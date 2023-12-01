@@ -2,18 +2,6 @@
 #include<cstring> // Include for memset
 using namespace std;
 
-// Recursive approach without memoization
-int knapSackRecursive(int W, int wt[], int val[], int n) {
-    if (n == 0 || W == 0)
-        return 0;
-
-    if (wt[n - 1] > W)
-        return knapSackRecursive(W, wt, val, n - 1);
-
-    else
-        return max(val[n - 1] + knapSackRecursive(W - wt[n - 1], wt, val, n - 1),
-                   knapSackRecursive(W, wt, val, n - 1));
-}
 
 
 // Dynamic Programming solution
@@ -44,9 +32,6 @@ int main() {
     int wt[] = {10, 20, 30};
     int W = 50;
     int n = sizeof(val) / sizeof(val[0]);
-
-    // Recursive solution without memoization
-    cout << "Maximum value using recursive approach: " << knapSackRecursive(W, wt, val, n) << endl;
 
     // Dynamic Programming solution
     cout << "Maximum value using dynamic programming: " << knapSackDP(W, wt, val, n) << endl;

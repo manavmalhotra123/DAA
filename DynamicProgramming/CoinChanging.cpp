@@ -3,7 +3,6 @@
 
 using namespace std;
 
-// Dynamic Programming approach
 int MinCoinChange(int target, int coins[], int numOfCoins)
 {
     int dp[target + 1];
