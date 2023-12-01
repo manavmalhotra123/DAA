@@ -1,47 +1,38 @@
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
-void supporter(int values[], int target, int start, int currentSet[], int result[], int &resultSize, int size) {
+bool isSubsetSum(int values[], int size, int target) {
     if (target == 0) {
-        resultSize = size;
-        for (int i = 0; i < size; ++i) {
-            result[i] = currentSet[i];
-        }
-        return;
+        return true;
+    }
+    if (size == 0 || target < 0) {
+        return false;
     }
 
-    if (start == size || target < 0) {
-        return;
+    // If the current element is greater than the target, skip it
+    if (values[size - 1] > target) {
+        return isSubsetSum(values, size - 1, target);
     }
 
-    supporter(values, target, start + 1, currentSet, result, resultSize, size);
-
-    currentSet[start] = values[start];
-    supporter(values, target - values[start], start + 1, currentSet, result, resultSize, size);
-    currentSet[start] = 0;
+    // Check if either including the current element or excluding it leads to a solution
+    return isSubsetSum(values, size - 1, target) ||
+           isSubsetSum(values, size - 1, target - values[size - 1]);
 }
 
-void solve(int values[], int size, int target) {
-    int* result = new int[size];
-    int* currentSet = new int[size];
-    int resultSize = 0;
-
-    int start = 0;
-    supporter(values, target, start, currentSet, result, resultSize, size);
-
-    if (resultSize > 0) {
+void solveSubsetSum(int values[], int size, int target) {
+    if (isSubsetSum(values, size, target)) {
         cout << "Subset that sums up to target " << target << " is: ";
-        for (int i = 0; i < resultSize; ++i) {
-            cout << result[i] << " ";
+        for (int i = 0; i < size; ++i) {
+            if (values[i] <= target) {
+                cout << values[i] << " ";
+                target -= values[i];
+            }
         }
         cout << endl;
     } else {
         cout << "No subset found that sums up to target " << target << endl;
     }
-
-    delete[] result;
-    delete[] currentSet;
 }
 
 int main() {
@@ -49,6 +40,6 @@ int main() {
     int size = sizeof(values) / sizeof(values[0]);
     int target = 31;
 
-    solve(values, size, target);
+    solveSubsetSum(values, size, target);
     return 0;
 }
