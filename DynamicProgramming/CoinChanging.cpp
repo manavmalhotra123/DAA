@@ -1,18 +1,18 @@
 #include<iostream>
-#include<vector>
 #include<climits>
 
 using namespace std;
 
 // Dynamic Programming approach
-int MinCoinChange(int target, vector<int>& coins)
+int MinCoinChange(int target, int coins[], int numOfCoins)
 {
-    vector<int> dp(target + 1, INT_MAX);
+    int dp[target + 1];
     dp[0] = 0;
 
     for (int i = 1; i <= target; ++i)
     {
-        for (int j = 0; j < coins.size(); ++j)
+        dp[i] = INT_MAX;
+        for (int j = 0; j < numOfCoins; ++j)
         {
             if (coins[j] <= i && dp[i - coins[j]] != INT_MAX)
             {
@@ -27,9 +27,10 @@ int MinCoinChange(int target, vector<int>& coins)
 int main()
 {
     int target = 20;
-    vector<int> coins = {1, 2, 5};
+    int coins[] = {1, 2, 5};
+    int numOfCoins = sizeof(coins) / sizeof(coins[0]);
 
-    int minCoinsDP = MinCoinChange(target, coins);
+    int minCoinsDP = MinCoinChange(target, coins, numOfCoins);
 
     cout << "Dynamic Programming - Minimum number of coins needed: " << minCoinsDP << endl;
 
