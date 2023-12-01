@@ -29,7 +29,6 @@ int main()
     int target = 20;
     vector<int> coins = {1, 2, 5};
 
-    int minCoinsRecursive = RecursiveMinCoinChange(target, coins);
     int minCoinsDP = MinCoinChange(target, coins);
 
     cout << "Dynamic Programming - Minimum number of coins needed: " << minCoinsDP << endl;
